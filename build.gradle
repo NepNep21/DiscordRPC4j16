@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 group 'club.bottomservices.discordrpc.lib'
@@ -17,4 +18,13 @@ dependencies {
 
 java {
     withSourcesJar()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.github.NepNep21'
+            from components.java
+        }
+    }
 }
