@@ -50,6 +50,15 @@ public class DiscordRPCClient {
         this.appId = appId;
     }
 
+    /**
+     * Constructs a new instance of this class with no event listeners
+     *
+     * @param appId     Your discord application id
+     */
+    public DiscordRPCClient(@Nonnull String appId) {
+        this(null, appId);
+    }
+
     private void close() {
         isConnected = false;
         try {
