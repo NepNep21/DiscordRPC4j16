@@ -4,13 +4,19 @@ import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public record RichPresence(@Nullable String state,
                            @Nullable String details,
                            @Nullable Timestamps timestamps,
                            @Nullable Assets assets,
                            @Nullable Party party,
-                           @Nullable Secrets secrets) {
+                           @Nullable Secrets secrets,
+                           @Nullable List<Button> buttons) {
+
+    public record Button(@Nonnull String label, @Nonnull String url) {
+    }
 
     public record Timestamps(@Nullable Long start, @Nullable Long end) {
     }
@@ -46,6 +52,9 @@ public record RichPresence(@Nullable String state,
         public String join = null;
         public String spectate = null;
         public String match = null;
+
+        public List<String> buttons = null;
+        public List<String> buttonUrls = null;
 
         public Builder setText(@Nullable String details, @Nullable String state) {
             this.state = state;
@@ -103,6 +112,16 @@ public record RichPresence(@Nullable String state,
             return this;
         }
 
+        public Builder addButton(@Nonnull String name, @Nonnull String url) {
+            if (buttons == null) {
+                buttons = new ArrayList<>();
+                buttonUrls = new ArrayList<>();
+            }
+            buttons.add(name);
+            buttonUrls.add(url);
+            return this;
+        }
+
         /**
          * Builds a {@link RichPresence} from the data in this builder
          * @throws IllegalArgumentException If any of the image keys or texts was an empty string, discord does not accept those
@@ -129,7 +148,15 @@ public record RichPresence(@Nullable String state,
             if (join != null || spectate != null || match != null) {
                 secrets = new Secrets(join, spectate, match);
             }
-            return new RichPresence(state, details, timestamps, assets, party, secrets);
+
+            List<Button> buttons = new ArrayList<>();
+            if (this.buttons != null) {
+                for (int i = 0; i < this.buttons.size(); i++) {
+                    buttons.add(new Button(this.buttons.get(i), buttonUrls.get(i)));
+                }
+            }
+            buttons = buttons.isEmpty() ? null : buttons;
+            return new RichPresence(state, details, timestamps, assets, party, secrets, buttons);
         }
     }
 }
