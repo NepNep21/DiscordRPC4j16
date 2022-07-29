@@ -48,7 +48,7 @@ public class UnixPipe implements Pipe {
                     socket.connect(UnixDomainSocketAddress.of(file.getCanonicalPath()));
                     break;
                 } catch (IOException e) {
-                    logger.info("IOException while binding socket " + i, e);
+                    logger.debug("IOException while binding socket " + i, e);
                 }
             }
         }
